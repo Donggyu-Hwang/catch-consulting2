@@ -1,18 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import { useNavigate, useSearchParams, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import QRCode from 'qrcode';
+import api from '../utils/api';
 
 const Register = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [searchParams] = useSearchParams();
-    const fixedType = searchParams.get('type');
+    const { type: routeType } = useParams();
+
+    // 우선순위: 경로 파라미터 > 쿼리 파라미터
+    const fixedType = routeType || searchParams.get('type');
 
     const listTypes = ['이력서1', '이력서2', '기업추천1', '기업추천2'];
-    // Decode URI component to handle Korean characters
-    const decodedType = fixedType ? decodeURIComponent(fixedType) : null;
+    // 경로 파라미터는 이미 디코딩되어 있음, 쿼리 파라미터는 디코딩 필요
+    const decodedType = fixedType ? (routeType ? fixedType : decodeURIComponent(fixedType)) : null;
     const isValidType = decodedType && listTypes.includes(decodedType);
 
     const [formData, setFormData] = useState({
@@ -49,7 +53,7 @@ const Register = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            await axios.post('http://localhost:3001/api/waitlist', formData);
+            await api.post('/waitlist', formData);
             setRegisteredPhone(formData.phone);
             setShowQRModal(true);
         } catch (error) {

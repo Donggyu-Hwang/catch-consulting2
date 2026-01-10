@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import api from '../utils/api';
 
 const Status = () => {
     const [searchParams] = useSearchParams();
@@ -16,7 +17,7 @@ const Status = () => {
         setLoading(true);
         setError('');
         try {
-            const res = await axios.get(`http://localhost:3001/api/waitlist/status/${phoneNumber}`);
+            const res = await api.get(`/waitlist/status/${phoneNumber}`);
             if (res.data.message === 'found') {
                 setStatusData(res.data);
             } else {

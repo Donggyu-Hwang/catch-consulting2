@@ -15,6 +15,7 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/register/:type" element={<Register />} />
           <Route path="/status" element={<Status />} />
           <Route path="/admin" element={<Dashboard />} />
         </Routes>

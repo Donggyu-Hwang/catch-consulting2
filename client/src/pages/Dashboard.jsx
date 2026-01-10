@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AdminAuth from '../components/AdminAuth';
+import api from '../utils/api';
 
 const Dashboard = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -70,7 +71,7 @@ const Dashboard = () => {
 
     const fetchList = async () => {
         try {
-            const res = await axios.get('http://localhost:3001/api/waitlist');
+            const res = await api.get('/waitlist');
             setAllWaitlist(res.data.data);
         } catch (err) {
             console.error(err);
@@ -96,7 +97,7 @@ const Dashboard = () => {
 
     const updateStatus = async (id, status) => {
         try {
-            await axios.put(`http://localhost:3001/api/waitlist/${id}`, { status });
+            await api.put(`/waitlist/${id}`, { status });
             fetchList();
         } catch (err) {
             alert('상태 업데이트 오류');
@@ -105,7 +106,7 @@ const Dashboard = () => {
 
     const postponePerson = async (id) => {
         try {
-            const res = await axios.put(`http://localhost:3001/api/waitlist/${id}/postpone`);
+            const res = await api.put(`/waitlist/${id}/postpone`);
             if (res.data.swapped) {
                 alert(`${res.data.current.name}님과 ${res.data.next.name}님의 순서를 바꿨습니다.`);
             }
