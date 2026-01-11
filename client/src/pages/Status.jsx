@@ -18,8 +18,8 @@ const Status = () => {
         setError('');
         try {
             const res = await api.get(`/waitlist/status/${phoneNumber}`);
-            if (res.data.message === 'found') {
-                setStatusData(res.data);
+            if (res.data.message === 'found' && res.data.data.length > 0) {
+                setStatusData(res.data.data);
             } else {
                 setError('해당 번호로 대기 중인 기록이 없습니다.');
                 setStatusData(null);
@@ -75,39 +75,60 @@ const Status = () => {
 
             {statusData && (
                 <div className="space-y-6">
-                    <div className="relative pt-4">
-                        <div className="text-6xl font-black text-emerald-600 mb-2">
-                            {statusData.ahead + 1}
-                        </div>
-                        <p className="text-gray-500 font-medium">번째 순서입니다</p>
+                    <div className="text-center">
+                        <p className="text-lg font-semibold text-gray-700">
+                            총 {statusData.length}개의 대기 목록
+                        </p>
                     </div>
 
-                    <div className="bg-emerald-50 rounded-xl p-4 text-left space-y-2">
-                        <div className="flex justify-between">
-                            <span className="text-gray-500">이름</span>
-                            <span className="font-semibold text-gray-900">{statusData.data.name}</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-gray-500">대기 목록</span>
-                            <span className="font-semibold text-gray-900">{statusData.data.list_type}</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-gray-500">직무 분야</span>
-                            <span className="font-semibold text-gray-900">{statusData.data.job_group}</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-gray-500">등록 시간</span>
-                            <span className="font-semibold text-gray-900">
-                                {new Date(statusData.data.created_at).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
-                            </span>
-                        </div>
-                    </div>
+                    {statusData.map((item, index) => (
+                        <div key={item.id} className="bg-emerald-50 rounded-xl p-4 text-left space-y-3">
+                            <div className="flex justify-between items-center border-b border-emerald-200 pb-2">
+                                <h3 className="font-bold text-emerald-700 text-lg">{item.list_type}</h3>
+                                <div className="text-4xl font-black text-emerald-600">
+                                    {item.ahead + 1}
+                                </div>
+                            </div>
 
-                    <div className="text-sm text-gray-400">
+                            <div className="space-y-2">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500 text-sm">이름</span>
+                                    <span className="font-semibold text-gray-900">{item.name}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500 text-sm">직무 분야</span>
+                                    <span className="font-semibold text-gray-900">{item.job_group}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500 text-sm">경력</span>
+                                    <span className="font-semibold text-gray-900">{item.years}년</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500 text-sm">등록 시간</span>
+                                    <span className="font-semibold text-gray-900">
+                                        {new Date(item.created_at).toLocaleString('ko-KR', {
+                                            month: 'numeric',
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        })}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="pt-2 border-t border-emerald-200 text-center">
+                                <span className="text-emerald-600 font-bold">
+                                    {item.ahead + 1}번째 순서입니다
+                                </span>
+                            </div>
+                        </div>
+                    ))}
+
+                    <div className="text-sm text-gray-400 text-center">
                         30초마다 자동으로 새로고침됩니다
                     </div>
 
-                    <button onClick={() => navigate('/')} className="text-emerald-600 hover:text-emerald-800 font-medium text-sm">
+                    <button onClick={() => navigate('/')} className="text-emerald-600 hover:text-emerald-800 font-medium text-sm w-full">
                         홈으로 돌아가기
                     </button>
                 </div>

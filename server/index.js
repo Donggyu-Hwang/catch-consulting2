@@ -208,36 +208,51 @@ app.put('/api/waitlist/:id/postpone', (req, res) => {
     });
 });
 
-// Get customer status
+// Get customer status (returns all waiting entries for the phone number)
 app.get('/api/waitlist/status/:phone', (req, res) => {
     const phone = req.params.phone;
-    // Find the user
-    db.get("SELECT * FROM waiting_list WHERE phone = ? AND status = 'waiting'", [phone], (err, row) => {
+    // Find all waiting entries for this user
+    db.all("SELECT * FROM waiting_list WHERE phone = ? AND status = 'waiting' ORDER BY created_at ASC", [phone], (err, rows) => {
         if (err) {
             res.status(400).json({ "error": err.message });
             return;
         }
-        if (!row) {
+        if (!rows || rows.length === 0) {
             console.log('Status check for', phone, ': not found or not waiting');
-            res.json({ "message": "not_found" }); // Or completed/cancelled
+            res.json({ "message": "not_found", "data": [] }); // Or completed/cancelled
             return;
         }
 
-        console.log('Status check for', phone, ': found, list_type =', row.list_type);
+        console.log('Status check for', phone, ': found', rows.length, 'entries');
 
-        // Count how many ahead in the same list_type
-        db.get("SELECT COUNT(*) as count FROM waiting_list WHERE status = 'waiting' AND list_type = ? AND created_at < ?", [row.list_type, row.created_at], (err, countRow) => {
-            if (err) {
-                res.status(400).json({ "error": err.message });
-                return;
-            }
-            console.log('Count result:', countRow.count, 'people ahead in', row.list_type);
-            res.json({
-                "message": "found",
-                "data": row,
-                "ahead": countRow.count
+        // For each entry, count how many ahead in the same list_type
+        // Include: waiting, called, onsite, absent (exclude: completed, cancelled)
+        const entriesWithAhead = rows.map(row => {
+            return new Promise((resolve, reject) => {
+                db.get("SELECT COUNT(*) as count FROM waiting_list WHERE status IN ('waiting', 'called', 'onsite', 'absent') AND list_type = ? AND created_at < ?", [row.list_type, row.created_at], (err, countRow) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve({
+                            ...row,
+                            ahead: countRow.count
+                        });
+                    }
+                });
             });
         });
+
+        Promise.all(entriesWithAhead)
+            .then(results => {
+                res.json({
+                    "message": "found",
+                    "data": results,
+                    "count": results.length
+                });
+            })
+            .catch(err => {
+                res.status(400).json({ "error": err.message });
+            });
     });
 });
 
