@@ -226,10 +226,10 @@ app.get('/api/waitlist/status/:phone', (req, res) => {
         console.log('Status check for', phone, ': found', rows.length, 'active entries');
 
         // For each entry, count how many ahead in the same list_type
-        // Include: waiting, called, onsite, absent, consulting (exclude: completed, cancelled)
+        // For counting ahead: exclude consulting (they are being served, not waiting)
         const entriesWithAhead = rows.map(row => {
             return new Promise((resolve, reject) => {
-                db.get("SELECT COUNT(*) as count FROM waiting_list WHERE status IN ('waiting', 'called', 'onsite', 'absent', 'consulting') AND list_type = ? AND created_at < ?", [row.list_type, row.created_at], (err, countRow) => {
+                db.get("SELECT COUNT(*) as count FROM waiting_list WHERE status IN ('waiting', 'called', 'onsite', 'absent') AND list_type = ? AND created_at < ?", [row.list_type, row.created_at], (err, countRow) => {
                     if (err) {
                         reject(err);
                     } else {
