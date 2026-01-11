@@ -163,9 +163,9 @@ app.put('/api/waitlist/:id/postpone', (req, res) => {
             return;
         }
 
-        // Find next person in same list_type with waiting status, created after current person
+        // Find next person in same list_type (excluding completed/cancelled), created after current person
         const sql = `SELECT * FROM waiting_list
-                     WHERE list_type = ? AND status = 'waiting' AND created_at > ?
+                     WHERE list_type = ? AND status IN ('waiting', 'called', 'onsite', 'absent', 'consulting') AND created_at > ?
                      ORDER BY created_at ASC
                      LIMIT 1`;
 
