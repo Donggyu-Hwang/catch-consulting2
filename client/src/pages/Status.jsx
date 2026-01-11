@@ -81,48 +81,64 @@ const Status = () => {
                         </p>
                     </div>
 
-                    {statusData.map((item, index) => (
-                        <div key={item.id} className="bg-emerald-50 rounded-xl p-4 text-left space-y-3">
-                            <div className="flex justify-between items-center border-b border-emerald-200 pb-2">
-                                <h3 className="font-bold text-emerald-700 text-lg">{item.list_type}</h3>
-                                <div className="text-4xl font-black text-emerald-600">
-                                    {item.ahead + 1}
-                                </div>
-                            </div>
+                    {statusData.map((item) => {
+                        // Status badge colors
+                        const statusConfig = {
+                            waiting: { label: '전화대기', color: 'bg-blue-100 text-blue-700' },
+                            called: { label: '전화완료', color: 'bg-purple-100 text-purple-700' },
+                            onsite: { label: '현장대기', color: 'bg-green-100 text-green-700' },
+                            absent: { label: '부재중', color: 'bg-yellow-100 text-yellow-700' }
+                        };
+                        const config = statusConfig[item.status] || statusConfig.waiting;
 
-                            <div className="space-y-2">
-                                <div className="flex justify-between">
-                                    <span className="text-gray-500 text-sm">이름</span>
-                                    <span className="font-semibold text-gray-900">{item.name}</span>
+                        return (
+                            <div key={item.id} className="bg-emerald-50 rounded-xl p-4 text-left space-y-3">
+                                <div className="flex justify-between items-center border-b border-emerald-200 pb-2">
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="font-bold text-emerald-700 text-lg">{item.list_type}</h3>
+                                        <span className={`px-2 py-0.5 rounded text-xs font-semibold ${config.color}`}>
+                                            {config.label}
+                                        </span>
+                                    </div>
+                                    <div className="text-4xl font-black text-emerald-600">
+                                        {item.ahead + 1}
+                                    </div>
                                 </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-500 text-sm">직무 분야</span>
-                                    <span className="font-semibold text-gray-900">{item.job_group}</span>
+
+                                <div className="space-y-2">
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-500 text-sm">이름</span>
+                                        <span className="font-semibold text-gray-900">{item.name}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-500 text-sm">직무 분야</span>
+                                        <span className="font-semibold text-gray-900">{item.job_group}</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-500 text-sm">경력</span>
+                                        <span className="font-semibold text-gray-900">{item.years}년</span>
+                                    </div>
+                                    <div className="flex justify-between">
+                                        <span className="text-gray-500 text-sm">등록 시간</span>
+                                        <span className="font-semibold text-gray-900">
+                                            {new Date(item.created_at).toLocaleString('ko-KR', {
+                                                month: 'numeric',
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-500 text-sm">경력</span>
-                                    <span className="font-semibold text-gray-900">{item.years}년</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-500 text-sm">등록 시간</span>
-                                    <span className="font-semibold text-gray-900">
-                                        {new Date(item.created_at).toLocaleString('ko-KR', {
-                                            month: 'numeric',
-                                            day: 'numeric',
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}
+
+                                <div className="pt-2 border-t border-emerald-200 text-center">
+                                    <span className="text-emerald-600 font-bold">
+                                        {item.ahead + 1}번째 순서입니다
                                     </span>
                                 </div>
                             </div>
-
-                            <div className="pt-2 border-t border-emerald-200 text-center">
-                                <span className="text-emerald-600 font-bold">
-                                    {item.ahead + 1}번째 순서입니다
-                                </span>
-                            </div>
-                        </div>
-                    ))}
+                        );
+                    })}
 
                     <div className="text-sm text-gray-400 text-center">
                         30초마다 자동으로 새로고침됩니다

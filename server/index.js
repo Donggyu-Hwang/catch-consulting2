@@ -208,22 +208,22 @@ app.put('/api/waitlist/:id/postpone', (req, res) => {
     });
 });
 
-// Get customer status (returns all waiting entries for the phone number)
+// Get customer status (returns all active entries for the phone number, excluding completed/cancelled)
 app.get('/api/waitlist/status/:phone', (req, res) => {
     const phone = req.params.phone;
-    // Find all waiting entries for this user
-    db.all("SELECT * FROM waiting_list WHERE phone = ? AND status = 'waiting' ORDER BY created_at ASC", [phone], (err, rows) => {
+    // Find all active entries (exclude: completed, cancelled)
+    db.all("SELECT * FROM waiting_list WHERE phone = ? AND status IN ('waiting', 'called', 'onsite', 'absent') ORDER BY created_at ASC", [phone], (err, rows) => {
         if (err) {
             res.status(400).json({ "error": err.message });
             return;
         }
         if (!rows || rows.length === 0) {
-            console.log('Status check for', phone, ': not found or not waiting');
-            res.json({ "message": "not_found", "data": [] }); // Or completed/cancelled
+            console.log('Status check for', phone, ': not found or no active entries');
+            res.json({ "message": "not_found", "data": [] });
             return;
         }
 
-        console.log('Status check for', phone, ': found', rows.length, 'entries');
+        console.log('Status check for', phone, ': found', rows.length, 'active entries');
 
         // For each entry, count how many ahead in the same list_type
         // Include: waiting, called, onsite, absent (exclude: completed, cancelled)
