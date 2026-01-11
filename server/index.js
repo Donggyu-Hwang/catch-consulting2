@@ -212,7 +212,7 @@ app.put('/api/waitlist/:id/postpone', (req, res) => {
 app.get('/api/waitlist/status/:phone', (req, res) => {
     const phone = req.params.phone;
     // Find all active entries (exclude: completed, cancelled)
-    db.all("SELECT * FROM waiting_list WHERE phone = ? AND status IN ('waiting', 'called', 'onsite', 'absent') ORDER BY created_at ASC", [phone], (err, rows) => {
+    db.all("SELECT * FROM waiting_list WHERE phone = ? AND status IN ('waiting', 'called', 'onsite', 'absent', 'consulting') ORDER BY created_at ASC", [phone], (err, rows) => {
         if (err) {
             res.status(400).json({ "error": err.message });
             return;
@@ -226,10 +226,10 @@ app.get('/api/waitlist/status/:phone', (req, res) => {
         console.log('Status check for', phone, ': found', rows.length, 'active entries');
 
         // For each entry, count how many ahead in the same list_type
-        // Include: waiting, called, onsite, absent (exclude: completed, cancelled)
+        // Include: waiting, called, onsite, absent, consulting (exclude: completed, cancelled)
         const entriesWithAhead = rows.map(row => {
             return new Promise((resolve, reject) => {
-                db.get("SELECT COUNT(*) as count FROM waiting_list WHERE status IN ('waiting', 'called', 'onsite', 'absent') AND list_type = ? AND created_at < ?", [row.list_type, row.created_at], (err, countRow) => {
+                db.get("SELECT COUNT(*) as count FROM waiting_list WHERE status IN ('waiting', 'called', 'onsite', 'absent', 'consulting') AND list_type = ? AND created_at < ?", [row.list_type, row.created_at], (err, countRow) => {
                     if (err) {
                         reject(err);
                     } else {

@@ -15,53 +15,61 @@ const Dashboard = () => {
 
     // Status configuration
     const statusConfig = {
+        consulting: {
+            label: '컨설팅 진행중',
+            shortLabel: '진행중',
+            color: 'bg-indigo-100 text-indigo-700',
+            borderColor: 'border-indigo-300',
+            order: 0
+        },
         onsite: {
             label: '현장',
             shortLabel: '현장',
             color: 'bg-green-100 text-green-700',
             borderColor: 'border-green-300',
-            order: 0
+            order: 1
         },
         absent: {
             label: '부재중',
             shortLabel: '부재',
             color: 'bg-yellow-100 text-yellow-700',
             borderColor: 'border-yellow-300',
-            order: 1
+            order: 2
         },
         called: {
             label: '전화완료',
             shortLabel: '통화',
             color: 'bg-purple-100 text-purple-700',
             borderColor: 'border-purple-300',
-            order: 2
+            order: 3
         },
         waiting: {
             label: '전화대기',
             shortLabel: '대기',
             color: 'bg-blue-100 text-blue-700',
             borderColor: 'border-blue-300',
-            order: 3
+            order: 4
         },
         completed: {
             label: '완료',
             shortLabel: '완료',
             color: 'bg-gray-200 text-gray-700',
             borderColor: 'border-gray-300',
-            order: 4
+            order: 5
         },
         cancelled: {
             label: '취소',
             shortLabel: '취소',
             color: 'bg-red-100 text-red-700',
             borderColor: 'border-red-300',
-            order: 5
+            order: 6
         }
     };
 
     const statusButtons = [
         { key: 'called', label: '📞 전화 완료', color: 'bg-purple-50 text-purple-600 hover:bg-purple-100' },
         { key: 'onsite', label: '🏢 현장 대기', color: 'bg-green-50 text-green-600 hover:bg-green-100' },
+        { key: 'consulting', label: '💬 컨설팅 진행중', color: 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100' },
         { key: 'absent', label: '⚠️ 부재중', color: 'bg-yellow-50 text-yellow-600 hover:bg-yellow-100' },
         { key: 'postpone', label: '⏰ 한 명 뒤로', color: 'bg-orange-50 text-orange-600 hover:bg-orange-100', isPostpone: true },
         { key: 'completed', label: '✅ 완료', color: 'bg-gray-50 text-gray-600 hover:bg-gray-100' },

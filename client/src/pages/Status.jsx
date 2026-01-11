@@ -84,6 +84,7 @@ const Status = () => {
                     {statusData.map((item) => {
                         // Status badge colors
                         const statusConfig = {
+                            consulting: { label: '컨설팅 진행중', color: 'bg-indigo-100 text-indigo-700' },
                             waiting: { label: '전화대기', color: 'bg-blue-100 text-blue-700' },
                             called: { label: '전화완료', color: 'bg-purple-100 text-purple-700' },
                             onsite: { label: '현장대기', color: 'bg-green-100 text-green-700' },
