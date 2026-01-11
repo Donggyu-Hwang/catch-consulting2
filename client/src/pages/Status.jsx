@@ -92,6 +92,10 @@ const Status = () => {
                         };
                         const config = statusConfig[item.status] || statusConfig.waiting;
 
+                        // 컨설팅 진행중이면 0번째, 아니면 ahead + 1번째
+                        const displayOrder = item.status === 'consulting' ? item.ahead : item.ahead + 1;
+                        const orderText = item.status === 'consulting' ? '0번째' : `${item.ahead + 1}번째`;
+
                         return (
                             <div key={item.id} className="bg-emerald-50 rounded-xl p-4 text-left space-y-3">
                                 <div className="flex justify-between items-center border-b border-emerald-200 pb-2">
@@ -102,7 +106,7 @@ const Status = () => {
                                         </span>
                                     </div>
                                     <div className="text-4xl font-black text-emerald-600">
-                                        {item.ahead + 1}
+                                        {displayOrder}
                                     </div>
                                 </div>
 
@@ -134,7 +138,7 @@ const Status = () => {
 
                                 <div className="pt-2 border-t border-emerald-200 text-center">
                                     <span className="text-emerald-600 font-bold">
-                                        {item.ahead + 1}번째 순서입니다
+                                        {orderText} 순서입니다
                                     </span>
                                 </div>
                             </div>
