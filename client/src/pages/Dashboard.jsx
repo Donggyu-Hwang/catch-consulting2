@@ -106,6 +106,11 @@ const Dashboard = () => {
     const updateStatus = async (id, status) => {
         try {
             await api.put(`/waitlist/${id}`, { status });
+            // 토글 닫기
+            setExpandedItems(prev => ({
+                ...prev,
+                [id]: false
+            }));
             fetchList();
         } catch (err) {
             alert('상태 업데이트 오류');
@@ -118,6 +123,11 @@ const Dashboard = () => {
             if (res.data.swapped) {
                 alert(`${res.data.current.name}님과 ${res.data.next.name}님의 순서를 바꿨습니다.`);
             }
+            // 토글 닫기
+            setExpandedItems(prev => ({
+                ...prev,
+                [id]: false
+            }));
             fetchList();
         } catch (err) {
             const errorMsg = err.response?.data?.error || err.message;
